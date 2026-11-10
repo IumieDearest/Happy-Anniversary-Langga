@@ -25,6 +25,7 @@
     --btn-line: #E6CFC9;    /* border of the outline (secondary) buttons */
     --label: #B2475E;       /* small uppercase labels */
     --card: #FFFFFF;        /* card background */
+    --sea: #DCEAE7;         /* voyage map water */
     --star3: #7FB2E5;       /* 3★ wish = blue */
     --star4: #9B72CF;       /* 4★ wish = purple */
     --star5: #D9A93A;       /* 5★ wish = gold */
@@ -58,9 +59,9 @@
 
   /* ============ SHARED PIECES (used in every section) ============ */
 
-  /* Small uppercase labels: section eyebrows, the wish banner tag
-     and the co-op header all look the same */
-  .eyebrow, .banner .tag, .coop .head {
+  /* Small uppercase labels: section eyebrows, the year on the log card,
+     the wish banner tag and the co-op header all look the same */
+  .eyebrow, .voyage-card .yr, .banner .tag, .coop .head {
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .18em;
@@ -80,7 +81,7 @@
   h2 em { color: var(--wine); }
   .lead { color: var(--muted); max-width: 520px; margin: 0 auto 28px; }
 
-  /* ONE card style: the letter and the co-op request use it */
+  /* ONE card style: the voyage log, the letter and the co-op request use it */
   .card {
     background: var(--card);
     border: 1px solid var(--line);
@@ -113,7 +114,7 @@
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s ease; }
   .reveal.visible { opacity: 1; transform: none; }
 
-  /* A gentle "pop in" for the wish results */
+  /* A gentle "pop in" for the voyage log and the wish results */
   @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.96); } }
 
   /* ============ 1. ENVELOPE INTRO ============ */
@@ -191,7 +192,7 @@
   .monthsary-line { color: var(--muted); max-width: 520px; margin: 0 auto; }
   .monthsary-line strong { color: var(--wine); }
 
-  /* ============ 3. WISH BANNER ============ */
+  /* ============ 4. WISH BANNER ============ */
   .banner {
     max-width: 640px; margin: 0 auto; padding: 24px 22px;
     border-radius: 22px; background: var(--blush);
@@ -274,7 +275,7 @@
   }
   @keyframes streak { to { left: 110%; top: 75%; } }
 
-  /* ============ 4. THE LETTER ============ */
+  /* ============ 5. THE LETTER ============ */
   .letter-card { max-width: 620px; margin: 0 auto; padding-bottom: 36px; text-align: left; }
   .letter-card p { font-family: var(--hand); font-size: 1.55rem; line-height: 1.35; color: #4A3326; margin-bottom: 18px; }
   .letter-card .sign { text-align: right; color: var(--wine); margin-bottom: 0; }
@@ -290,7 +291,7 @@
     box-shadow: 0 2px 6px rgba(140, 28, 58, .25);
   }
 
-  /* ============ 5. CO-OP REQUEST (final question) ============ */
+  /* ============ 6. CO-OP REQUEST (final question) ============ */
   .coop { max-width: 460px; margin: 24px auto 0; text-align: left; }
   .coop .head { margin-bottom: 14px; }
   .coop .who { display: flex; align-items: center; gap: 14px; }
@@ -328,6 +329,11 @@
     #hero { padding-top: 96px; }
     .counter { gap: 12px; }
     .tile { padding: 18px 8px; }
+  }
+  /* phones: a taller map so the islands have room */
+  @media (max-width: 560px) {
+    .sea { aspect-ratio: 4 / 5; }
+    .island { width: 42px; height: 42px; font-size: .95rem; }
   }
   /* very narrow phones (under 360px): counter becomes 2 × 2 */
   @media (max-width: 359px) {
@@ -376,7 +382,7 @@
   <p class="monthsary-line">…and counting. That's <strong id="monthsCount">0</strong> monthsaries, and just as many matching profile pictures.</p>
 </section>
 
-<!-- 3. WISH BANNER (replaces the reasons jar) -->
+<!-- 4. WISH BANNER (replaces the reasons jar) -->
 <section id="wish" class="reveal">
   <p class="eyebrow">Limited-time event</p>
   <h2>Make a <em>wish</em></h2>
@@ -408,7 +414,7 @@
 <!-- the shooting star shown during a wish -->
 <div class="wish-flash" id="wishFlash"><div class="streak" id="streakEl"></div></div>
 
-<!-- 4. THE LETTER (a white card with a small wax seal) -->
+<!-- 5. THE LETTER (a white card with a small wax seal) -->
 <section id="letter-section" class="reveal">
   <p class="eyebrow">Sent across the sea</p>
   <h2>A <em>letter</em> for you</h2>
@@ -417,7 +423,7 @@
   <div class="wax-seal" aria-hidden="true">♥</div>
 </section>
 
-<!-- 5. CO-OP REQUEST (final question) -->
+<!-- 6. CO-OP REQUEST (final question) -->
 <section id="coop-section" class="reveal">
   <p class="eyebrow">One last thing</p>
   <h2>You have a <em>new request</em></h2>
@@ -447,8 +453,8 @@
    have to touch the HTML or the functions below.
    ===================================================================== */
 const CONFIG = {
-  hisName: "Love",                  // his name or nickname
-  herName: "Anna",
+  hisName: "Langga",                  // his name or nickname
+  herName: "Langga",                 // your name or nickname
   startDate: "2019-11-11T00:00:00", // the day you got together (year-month-day)
 
   // WISH BANNER
@@ -487,17 +493,17 @@ const CONFIG = {
 
   // The letter: each string is one paragraph.
   letter: [
-    "They say Odysseus spent twenty years trying to get home. I understand him now, because home was never a place for me. It's you, even when there's a whole ocean between us.",
-    "Seven years of late-night calls, of \"are you still awake?\", of matching profile pictures every single month so the whole world knows we're still us. Thank you for every one of them, and for every terrible pun.",
-    "Every mile between us is just part of the voyage. And every voyage, no matter how long, ends at home.",
-    "So until the day the distance runs out, I'll keep sailing toward you."
+    "It's already been seven years huh? It was like yesterday when you turned me down, when I sent that stupid letter that you kept rereading regardless on how cringy it has been. Now I'm graduating from college, and I still can't believe that you are still here, with me, and that we still dream about what our future will hold. I can't believe that we are still together.",
+    "Seven years... seven years of late-night calls, of \"Musta?\", of matching profile pictures every single month so the whole world knows we're still us. Thank you for every one of them, even for the every terrible pun.",
+    "So no matter how many more years we have to go, I will always choose you. I will always be here for you, and I will always love you and choose you every day.",
+    "So until the day the distance runs out, I'll keep sailing towards you. At Full Speed Ahead. Or could just be waiting, waiting for you."
   ],
-  signature: "Yours, across every sea — Anna",
+  signature: "Yours, across every sea — Langga",
 
   // Final question (co-op request)
   coopMessage: "<b>Anna</b> (AR 7) wants to join your world.",
   coopSub: "Destination: Year 8 and beyond",
-  noTexts: ["Decline", "Are you sure?", "Connection error", "Wrong button", "Try again", "Request can't be declined"],
+  noTexts: ["Decline", "Are you sure?", "Connection error", "Wrong button", "Try again", "Request can't be declined", "Rebooting…", "Nope", "Not today", "You can't escape me", "I see you", "You can't hide from me", "You're stuck with me", "This is a trap", "You have no choice", "Didn't you already agree to this?", "You can't say no", "I won't take no for an answer", "You can't resist me", "Don't fight it", "You can't escape love", "You can't escape me, my love", "Nooooooooooooooooooooooo", "Don't you love me anymore? :<"],
   yesMessage: "Joined! Welcome to Year 8, my co-op partner. Happy anniversary, I love you ♥",
 
   footer: "made with love (and a little code), all the way across the distance"
@@ -552,9 +558,8 @@ function updateCounter() {
 updateCounter();
 setInterval(updateCounter, 1000); // refresh every second
 
-
 /* =====================================================================
-   3. WISH BANNER — Genshin-style pulls with pity and primogems
+   4. WISH BANNER — Genshin-style pulls with pity and primogems
    ===================================================================== */
 let primogems = CONFIG.startingPrimogems;
 let pity = 0;
@@ -655,7 +660,7 @@ function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
 
 
 /* =====================================================================
-   4. THE LETTER — fill the letter card, one <p> per paragraph
+   5. THE LETTER — fill the letter card, one <p> per paragraph
    ===================================================================== */
 const letterText = document.getElementById("letterText");
 CONFIG.letter.forEach(function (para) {
@@ -670,7 +675,7 @@ letterText.appendChild(sign);
 
 
 /* =====================================================================
-   5. CO-OP REQUEST + THE "DECLINE" BUTTON THAT RUNS AWAY
+   6. CO-OP REQUEST + THE "DECLINE" BUTTON THAT RUNS AWAY
    ===================================================================== */
 document.getElementById("avatar").textContent = CONFIG.herName.charAt(0);
 document.getElementById("coopMsg").innerHTML = CONFIG.coopMessage;
