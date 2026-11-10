@@ -25,7 +25,6 @@
     --btn-line: #E6CFC9;    /* border of the outline (secondary) buttons */
     --label: #B2475E;       /* small uppercase labels */
     --card: #FFFFFF;        /* card background */
-    --sea: #DCEAE7;         /* voyage map water */
     --star3: #7FB2E5;       /* 3★ wish = blue */
     --star4: #9B72CF;       /* 4★ wish = purple */
     --star5: #D9A93A;       /* 5★ wish = gold */
@@ -59,9 +58,9 @@
 
   /* ============ SHARED PIECES (used in every section) ============ */
 
-  /* Small uppercase labels: section eyebrows, the year on the log card,
-     the wish banner tag and the co-op header all look the same */
-  .eyebrow, .voyage-card .yr, .banner .tag, .coop .head {
+  /* Small uppercase labels: section eyebrows, the wish banner tag
+     and the co-op header all look the same */
+  .eyebrow, .banner .tag, .coop .head {
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .18em;
@@ -81,7 +80,7 @@
   h2 em { color: var(--wine); }
   .lead { color: var(--muted); max-width: 520px; margin: 0 auto 28px; }
 
-  /* ONE card style: the voyage log, the letter and the co-op request use it */
+  /* ONE card style: the letter and the co-op request use it */
   .card {
     background: var(--card);
     border: 1px solid var(--line);
@@ -91,7 +90,7 @@
 
   /* Buttons: .btn gives the pill shape, then add a color:
      .btn-primary   = wine (the main action)
-     .btn-secondary = outline only */
+     .btn-secondary = white with a thin border */
   .btn {
     display: inline-flex;
     align-items: center;
@@ -107,14 +106,13 @@
   }
   .btn-primary { background: var(--wine); color: #fff; }
   .btn-primary:hover { background: var(--wine-hover); }
-  .btn-secondary { background: transparent; border-color: var(--btn-line); color: var(--wine); }
-  .btn-secondary:hover { background: var(--card); }
+  .btn-secondary { background: var(--card); border-color: var(--btn-line); color: var(--wine); }   /* solid white, never see-through */
 
   /* Sections fade up as you scroll to them (the JS adds "visible") */
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .9s ease, transform .9s ease; }
   .reveal.visible { opacity: 1; transform: none; }
 
-  /* A gentle "pop in" for the voyage log and the wish results */
+  /* A gentle "pop in" for the wish results */
   @keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.96); } }
 
   /* ============ 1. ENVELOPE INTRO ============ */
@@ -192,7 +190,7 @@
   .monthsary-line { color: var(--muted); max-width: 520px; margin: 0 auto; }
   .monthsary-line strong { color: var(--wine); }
 
-  /* ============ 4. WISH BANNER ============ */
+  /* ============ 3. WISH BANNER ============ */
   .banner {
     max-width: 640px; margin: 0 auto; padding: 24px 22px;
     border-radius: 22px; background: var(--blush);
@@ -275,7 +273,7 @@
   }
   @keyframes streak { to { left: 110%; top: 75%; } }
 
-  /* ============ 5. THE LETTER ============ */
+  /* ============ 4. THE LETTER ============ */
   .letter-card { max-width: 620px; margin: 0 auto; padding-bottom: 36px; text-align: left; }
   .letter-card p { font-family: var(--hand); font-size: 1.55rem; line-height: 1.35; color: #4A3326; margin-bottom: 18px; }
   .letter-card .sign { text-align: right; color: var(--wine); margin-bottom: 0; }
@@ -291,7 +289,7 @@
     box-shadow: 0 2px 6px rgba(140, 28, 58, .25);
   }
 
-  /* ============ 6. CO-OP REQUEST (final question) ============ */
+  /* ============ 5. CO-OP REQUEST (final question) ============ */
   .coop { max-width: 460px; margin: 24px auto 0; text-align: left; }
   .coop .head { margin-bottom: 14px; }
   .coop .who { display: flex; align-items: center; gap: 14px; }
@@ -305,12 +303,18 @@
   .coop .msg b { font-weight: 700; }
   .coop .sub { font-size: .875rem; color: var(--muted); margin-top: 2px; }
 
-  /* The answer buttons sit side by side in this box.
-     "Decline" jumps to a random spot inside it (the JS does that). */
-  .answer-zone { position: relative; height: 150px; }
-  #yesBtn, #noBtn { position: absolute; top: 48px; width: min(140px, calc(50% - 6px)); padding: 6px 10px; }
+  /* The answer buttons sit side by side in the middle of this box.
+     "Decline" jumps to a random spot inside it that doesn't cover "Accept" (the JS does that).
+     The box is tall enough that "Decline" can hide above or below "Accept". */
+  .answer-zone { position: relative; height: 190px; }
+  #yesBtn, #noBtn { position: absolute; top: calc(50% - 24px); width: min(140px, calc(50% - 6px)); padding: 6px 10px; }
   #yesBtn { right: calc(50% + 6px); }
-  #noBtn { left: calc(50% + 6px); transition: left .25s, top .25s; }
+  #noBtn {
+    left: calc(50% + 6px);
+    z-index: 1;                  /* if it slides past "Accept", it goes over it, never under */
+    overflow-wrap: anywhere;     /* very long words like "Nooooooo…" wrap instead of spilling out */
+    transition: left .25s, top .25s;
+  }
   #yay {
     display: none; padding: 26px 0 6px; text-align: center;
     font-family: var(--display); font-style: italic; font-size: 1.4rem; line-height: 1.3; color: var(--wine);
@@ -329,11 +333,6 @@
     #hero { padding-top: 96px; }
     .counter { gap: 12px; }
     .tile { padding: 18px 8px; }
-  }
-  /* phones: a taller map so the islands have room */
-  @media (max-width: 560px) {
-    .sea { aspect-ratio: 4 / 5; }
-    .island { width: 42px; height: 42px; font-size: .95rem; }
   }
   /* very narrow phones (under 360px): counter becomes 2 × 2 */
   @media (max-width: 359px) {
@@ -382,7 +381,7 @@
   <p class="monthsary-line">…and counting. That's <strong id="monthsCount">0</strong> monthsaries, and just as many matching profile pictures.</p>
 </section>
 
-<!-- 4. WISH BANNER (replaces the reasons jar) -->
+<!-- 3. WISH BANNER (replaces the reasons jar) -->
 <section id="wish" class="reveal">
   <p class="eyebrow">Limited-time event</p>
   <h2>Make a <em>wish</em></h2>
@@ -414,7 +413,7 @@
 <!-- the shooting star shown during a wish -->
 <div class="wish-flash" id="wishFlash"><div class="streak" id="streakEl"></div></div>
 
-<!-- 5. THE LETTER (a white card with a small wax seal) -->
+<!-- 4. THE LETTER (a white card with a small wax seal) -->
 <section id="letter-section" class="reveal">
   <p class="eyebrow">Sent across the sea</p>
   <h2>A <em>letter</em> for you</h2>
@@ -423,7 +422,7 @@
   <div class="wax-seal" aria-hidden="true">♥</div>
 </section>
 
-<!-- 6. CO-OP REQUEST (final question) -->
+<!-- 5. CO-OP REQUEST (final question) -->
 <section id="coop-section" class="reveal">
   <p class="eyebrow">One last thing</p>
   <h2>You have a <em>new request</em></h2>
@@ -559,7 +558,7 @@ updateCounter();
 setInterval(updateCounter, 1000); // refresh every second
 
 /* =====================================================================
-   4. WISH BANNER — Genshin-style pulls with pity and primogems
+   3. WISH BANNER — Genshin-style pulls with pity and primogems
    ===================================================================== */
 let primogems = CONFIG.startingPrimogems;
 let pity = 0;
@@ -660,7 +659,7 @@ function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
 
 
 /* =====================================================================
-   5. THE LETTER — fill the letter card, one <p> per paragraph
+   4. THE LETTER — fill the letter card, one <p> per paragraph
    ===================================================================== */
 const letterText = document.getElementById("letterText");
 CONFIG.letter.forEach(function (para) {
@@ -675,7 +674,7 @@ letterText.appendChild(sign);
 
 
 /* =====================================================================
-   6. CO-OP REQUEST + THE "DECLINE" BUTTON THAT RUNS AWAY
+   5. CO-OP REQUEST + THE "DECLINE" BUTTON THAT RUNS AWAY
    ===================================================================== */
 document.getElementById("avatar").textContent = CONFIG.herName.charAt(0);
 document.getElementById("coopMsg").innerHTML = CONFIG.coopMessage;
@@ -683,18 +682,39 @@ document.getElementById("coopSub").textContent = CONFIG.coopSub;
 document.getElementById("footer").textContent = CONFIG.footer;
 
 const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
 const zone = document.getElementById("answerZone");
 let noCount = 0;
 
+// true if "Decline", placed at (x, y), would touch the "Accept" button
+function wouldCoverAccept(x, y) {
+  const gap = 8; // keep a little space between the two buttons
+  return x < yesBtn.offsetLeft + yesBtn.offsetWidth + gap &&
+         x + noBtn.offsetWidth + gap > yesBtn.offsetLeft &&
+         y < yesBtn.offsetTop + yesBtn.offsetHeight + gap &&
+         y + noBtn.offsetHeight + gap > yesBtn.offsetTop;
+}
+
 function runAway(e) {
   if (e) e.preventDefault();
-  // move the button to a random spot inside the answer zone
-  const maxX = zone.clientWidth - noBtn.offsetWidth;
-  const maxY = zone.clientHeight - noBtn.offsetHeight;
-  noBtn.style.left = Math.random() * maxX + "px";
-  noBtn.style.top = Math.random() * maxY + "px";
+  // change the text first, so we measure the button at its new size
   noCount++;
   noBtn.textContent = CONFIG.noTexts[noCount % CONFIG.noTexts.length];
+
+  // try random spots inside the answer zone until one doesn't cover "Accept"
+  const maxX = zone.clientWidth - noBtn.offsetWidth;
+  const maxY = zone.clientHeight - noBtn.offsetHeight;
+  let x, y;
+  for (let tries = 0; tries < 50; tries++) {
+    x = Math.random() * maxX;
+    y = Math.random() * maxY;
+    if (!wouldCoverAccept(x, y)) break;
+  }
+  // still on top of "Accept" after 50 tries? the far right edge is always free
+  if (wouldCoverAccept(x, y)) x = maxX;
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
 }
 noBtn.addEventListener("mouseenter", runAway);  // desktop: runs before he can click
 noBtn.addEventListener("touchstart", runAway);  // phone: runs when touched
